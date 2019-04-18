@@ -18,3 +18,6 @@ class PyLibsonata(PythonPackage):
     depends_on('hdf5~mpi', type='build')
 
     depends_on('py-numpy@1.12:', type='run')
+
+    def patch(self):
+        filter_file(r'numpy>=1.12.0', r'', "setup.py")
