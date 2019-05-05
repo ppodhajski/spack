@@ -75,6 +75,11 @@ class Tensorflow(Package):
     def install(self, spec, prefix):
         configure()
         spec = self.spec
+
+        # set swig path in install instead of setup_environment as
+        # it could be external and not accessible while module refresh
+        env['SWIG_PATH'] = str(spec['swig'].prefix.bin)
+
         # version dependent fixes
         if spec.satisfies('@1.3.0:1.5.0'):
             # checksum for protobuf that bazel downloads (@github) changed, comment out to avoid error
@@ -159,7 +164,6 @@ class Tensorflow(Package):
         spack_env.set('PYTHON_BIN_PATH', str(spec['python'].prefix.bin) + '/python')
         spack_env.set('PYTHONUSERBASE', str(spec['python'].prefix))
         spack_env.set('USE_DEFAULT_PYTHON_LIB_PATH', '1')
-        spack_env.set('SWIG_PATH', str(spec['swig'].prefix.bin))
         spack_env.set('GCC_HOST_COMPILER_PATH', spack_cc)
 
         spack_env.set('TF_ENABLE_XLA', '0')
