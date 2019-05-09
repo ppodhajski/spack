@@ -19,7 +19,7 @@ class PyGrpcio(PythonPackage):
     depends_on('openssl@1.0.2:',    		type=('build', 'run'))
     depends_on('py-setuptools',     		type='build')
     depends_on('py-six@1.10:',      		type=('build', 'run'))
-    depends_on('py-futures@2.2.0:', 		type=('build', 'run'))
+    depends_on('py-futures@2.2.0:', 		type=('build', 'run'), when='^python@2.7.0:2.7.999')
     depends_on('py-enum34@1.0.4:',  		type=('build', 'run'), when='^python@:3.1')
     depends_on('py-sphinx@1.3:',    		type=('build', 'run'))
     depends_on('py-sphinx-rtd-theme@0.1.8:', 	type=('build', 'run'))

@@ -653,8 +653,5 @@ EOF
     fi
 
     cp "${HOME}/.spack/compilers.yaml" "${HOME}" || true
-
-    # log "cleaning up after a bad spack"
-    # spack clean -a
 }
 
