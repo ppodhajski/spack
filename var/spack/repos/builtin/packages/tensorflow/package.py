@@ -220,17 +220,3 @@ class Tensorflow(Package):
             spack_env.set('TF_SYSTEM_LIBS', "boringssl")
             spack_env.set('TF_NEED_IGNITE', '0')
             spack_env.set('TF_NEED_ROCM', '0')
-
-        # set tmpdir to a non-NFS filesystem (because bazel uses ~/.cache/bazel)
-        # TODO: This should be checked for non-nfsy filesystem, but the current
-        #       best idea for it is to check
-        #           subprocess.call(['stat', '--file-system', '--format=%T', tmp_path])
-        #       to not be nfs. This is only valid for Linux and we'd like to
-        #       stay at least also OSX compatible
-        # Note: This particular path below /tmp/spack/tmp is required by the visionary container
-        #       build flow:
-        # Note: On BB5 if we use /tmp as TMPDIR then we get "java.io.IOException: No space left on device"
-        # tmp_path = env.get('SPACK_TMPDIR', '/tmp/spack') + '/tf'
-        # mkdirp(tmp_path)
-        # spack_env.set('TEST_TMPDIR', tmp_path)
-        # spack_env.set('HOME', tmp_path)
