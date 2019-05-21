@@ -118,9 +118,10 @@ class SimModel(Package):
     def _patch_special(prefix, libname='libnrnmech.so'):
         """Patch bash-based special to point to nrnmech lib inside lib/
         """
-        which('sed')('-i',
+        which('sed')('-i.bak',
                      's#-dll .*#-dll %s "$@"#' % prefix.lib.join(libname),
                      prefix.bin.special)
+        os.remove(prefix.bin.join('special.bak'))
 
     def _install_src(self, prefix):
         """Copy original and translated c mods
