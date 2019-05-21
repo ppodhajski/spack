@@ -72,6 +72,7 @@ class Coreneuron(CMakePackage):
     depends_on('eigen@3.4:~metis~scotch~fftw~suitesparse~mpfr', when='+nmodl')
     depends_on('caliper', when='+caliper')
     depends_on('ispc', when='+ispc')
+    #depends_on('py-sympy@1.3:', when='+sympy')
 
     # Old versions. Required by previous neurodamus package.
     version('master',      git=url, branch='pr/caliper_instrument', submodules=True)
@@ -106,24 +107,30 @@ class Coreneuron(CMakePackage):
 
     def get_flags(self):
         spec = self.spec
-        flags = "-g -O2"
+        if '%gcc' in spec:
+            flags = "-O3"
+        else:
+            flags = "-O2"
         if 'bgq' in spec.architecture and '%xl' in spec:
-            flags = '-O3 -qtune=qp -qarch=qp -q64 -qhot=simd -qsmp -qthreaded -g'
+            flags = '-O3 -qtune=qp -qarch=qp -q64 -qhot=simd -qsmp -qthreaded '
         if '%intel' in spec:
-            flags = '-g -xHost -O2 -qopt-report=5'
+            flags = ' -xHost -O2 -qopt-report=5'
             if '+amd' in spec:
-                flags = '-g -O2 -march=core-avx2'
+                flags = ' -O2 -march=core-avx2'
             if '+knl' in spec:
-                flags = '-g -xMIC-AVX512 -O2 -qopt-report=5'
+                flags = ' -xMIC-AVX512 -O2 -qopt-report=5'
         if '+gpu' in spec:
             flags = '-O2 -Minline=size:1000,levels:100,totalsize:40000,maxsize:4000'
-            flags += ' -ta=tesla:cuda%s' % (spec['cuda'].version.up_to(2))
+            flags = '-O2 -Minline=size:1000,levels:100,totalsize:40000,maxsize:4000 -ta=tesla:cuda%s -ta=tesla:cc70' % (spec['cuda'].version.up_to(2))
         if '+debug' in spec:
             flags = '-g -O0'
         # when pdt is used for instrumentation, the gcc's unint128 extension
         # is activated from random123 which results in compilation error
         if '+profile' in spec:
             flags += ' -DTAU -DR123_USE_GNU_UINT128=0'
+        if '%pgi' in spec:
+            flags += ' -DEIGEN_DONT_VECTORIZE=1'
+        flags += ' -DR123_USE_SSE=0'
         return flags
 
     def cmake_args(self):
@@ -132,6 +139,7 @@ class Coreneuron(CMakePackage):
 
         options = ['-DENABLE_SPLAYTREE_QUEUING=ON',
                    '-DCMAKE_BUILD_TYPE=CUSTOM',
+                   '-DDISABLE_NRN_TIMEOUT=ON',
                    '-DENABLE_REPORTINGLIB=%s' % ('ON' if '+report' in spec else 'OFF'),
                    '-DENABLE_MPI=%s' % ('ON' if '+mpi' in spec else 'OFF'),
                    '-DCORENEURON_OPENMP=%s' % ('ON' if '+openmp' in spec else 'OFF'),

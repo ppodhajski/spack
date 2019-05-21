@@ -150,7 +150,10 @@ class Neuron(Package):
         """ Build options setting compilers and compilation flags,
             using MPIC[XX] and C[XX]FLAGS
         """
-        flags = '-O2 -g'
+        if self.spec.satisfies('%gcc'):
+            flags = '-O3'
+        else:
+            flags = '-O2'
 
         if 'bgq' in spec.architecture:
             flags = '-O3 -qtune=qp -qarch=qp -q64 -qstrict -qnohot -g'
@@ -214,7 +217,8 @@ class Neuron(Package):
 
         options.append('--with-readline=%s' % spec['readline'].prefix)
         ld_flags = 'LDFLAGS=-L{0.prefix.lib} {0.libs.rpath_flags}'.format(spec['readline'])
-        ld_flags += ' {0.libs.ld_flags} {0.libs.rpath_flags}'.format(spec['caliper'])
+        if spec.satisfies('@caliper'):
+           ld_flags += ' {0.libs.ld_flags} {0.libs.rpath_flags}'.format(spec['caliper'])
 
         if 'ncurses' in spec:
             options.extend(['CURSES_LIBS=%s' % spec['ncurses'].libs.ld_flags,
