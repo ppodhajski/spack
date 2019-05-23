@@ -103,7 +103,7 @@ class SimModel(Package):
         mkdirp(prefix.share.modc)
 
         self._install_binaries()
-       
+
         if spec.satisfies('+coreneuron'):
             install = which('nrnivmech_install.sh', path=".")
             install(prefix)
@@ -117,8 +117,8 @@ class SimModel(Package):
         prefix = self.prefix
         shutil.copy(join_path(arch, 'special'), prefix.bin)
 
-        # Install libnrnmech - might have several links. 
-        for f in find(arch + "/.libs", 'libnrnmech*.so', recursive=False):
+        # Install libnrnmech - might have several links.
+        for f in find(arch + "/.libs", 'libnrnmech*.so*', recursive=False):
             if not os.path.islink(f):
                 bname = os.path.basename(f)
                 lib_dst = prefix.lib.join(bname[:bname.find(".")] + lib_suffix + ".so")
