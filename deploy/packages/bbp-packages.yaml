@@ -89,10 +89,11 @@ packages:
       # - lapack
       - python
     specs:
-      - py-bluepymm@0.6.38
-      - py-bluepyopt@1.6.56
+      # Default neuron modules are Intel. Runtime dependencies shall match
+      - py-bluepymm@0.6.38 ^neuron%intel
+      - py-bluepyopt@1.6.56 ^neuron%intel
       - py-efel@3.0.22
-      - py-bglibpy
+      - py-bglibpy ^neuron%intel
 
 
   #### cellular ####
